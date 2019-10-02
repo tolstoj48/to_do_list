@@ -2,11 +2,14 @@ import to_do_list
 
 
 class Menu:
+    """Menu initialization."""
     def __init__(self):
-        self.listy = ["1. Add a note", "2. Delete a note", "3. End the app"]
+        self.listy = ["1. Add a note", "2. Delete a note", 
+        "3. End the app"]
         self.to_do = to_do_list.Notebook()
 
     def print_menu(self):
+        """Prints menu to cmd line."""
         while True:
             print("\n")
             if len(self.to_do.all_notes) == 0:
@@ -19,8 +22,10 @@ class Menu:
                 print ("List of notes:")
                 print ("---------")
                 for i in self.to_do.all_notes:
-                    print ("| {:<5s} | Scheduled: {:<12s} ||| Note name: {:<5s} | Created: {:<5s} "\
-                    .format( self.to_do.all_notes[i][0], self.to_do.all_notes[i][2], i,self.to_do.all_notes[i][1]))
+                    print ("| {:<5s} | Scheduled: {:<12s} ||| Note name: " 
+                       "{:<5s} | Created: {:<5s} "\
+                    .format( self.to_do.all_notes[i][0], 
+                        self.to_do.all_notes[i][2], i, self.to_do.all_notes[i][1]))
                 print ("---------------------------------------------------------------------")
                 print("\n")
             for i in self.listy:
@@ -31,8 +36,7 @@ class Menu:
                 if choice < 1 or choice > 3:
                     raise Exeption()
                 if choice == 3:
-                    print("\n")
-                    print ("The app is ended.")
+                    self.run_choice(choice)
                     break
             except:
                 print("\n")
@@ -43,11 +47,16 @@ class Menu:
             self.run_choice(choice)
 
     def run_choice(self, choice):
-        choices_functions = {1: self.to_do.add_a_note, 2: self.to_do.delete_a_note, 3: self.end_menu}
+        """Runnnig input choice by running the methods in the notebook
+        instance.
+        """
+        choices_functions = {1: self.to_do.add_a_note, 2: 
+        self.to_do.delete_a_note, 3: self.end_menu}
         function = choices_functions[choice]
         return function()
 
     def end_menu(self):
+        """The app kill."""
         print ("Ending the app.")
 
 

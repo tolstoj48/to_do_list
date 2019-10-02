@@ -4,6 +4,7 @@ import itertools
 
 
 class Connection:
+    """Connection to the db file."""
     def __init__(self):
         self.conn = sqlite3.connect("to_do_list.db")
         self.cursor = self.conn.cursor()
@@ -13,6 +14,7 @@ class Connection:
 
 
 class Note:
+    """Initializing a note."""
     def __init__(self, name, text, date_of_inception, scheduled_date):
         self.name = name
         self.text = text
@@ -21,7 +23,9 @@ class Note:
 
 
 class Notebook(dict):
+    """Notebook"""
     def __init__(self):
+        """Notebook initialization."""
         self.conn = Connection()
         self.notes = list(self.conn.cursor.execute("""SELECT text, 
             date_of_inception, scheduled_date, name FROM notes"""))
@@ -29,19 +33,20 @@ class Notebook(dict):
         self.conn.closing_db()
 
     def add_a_note(self):
+        """Adding a new note to the notebook."""
         try:
             name = str(input("Please, enter a name of the new note: "))
             text = str(input("Please, enter a text of the new note: "))
             date_of_inception = str(datetime.date.today())
-            scheduled_date = str(input("Please, enter a scheduled date of the"\
+            scheduled_date = str(input("Please, enter a scheduled date of the"
             " new note. Use the format YYYY-MM-DD: "))
             if self.validate_date_format(scheduled_date) == False:
                 return
             note = Note(name, text, date_of_inception, scheduled_date)
-            self.all_notes[note.name] = [note.text, note.date_of_inception, \
+            self.all_notes[note.name] = [note.text, note.date_of_inception,
             note.scheduled_date]
             self.conn = Connection()
-            inserted = [(note.text, note.date_of_inception, note.scheduled_date,\
+            inserted = [(note.text, note.date_of_inception, note.scheduled_date, 
                 note.name)]
             self.conn.cursor.executemany("INSERT INTO notes VALUES (?,?,?,?)",\
              inserted)
@@ -54,15 +59,19 @@ class Notebook(dict):
             print ("**********************************************************************")
 
     def delete_a_note(self):
+        """Removal of a note."""
         try:
             name = str(input("Please, enter the name of the deleted note: "))
             self.conn = Connection()
-            self.conn.cursor.execute("DELETE FROM notes WHERE name = ?", (name,))
+            self.conn.cursor.execute("DELETE FROM notes WHERE name = ?", 
+                (name,))
             self.conn.conn.commit()
             self.conn.closing_db()
             print ("\n")
-            print("The Deleted note: | {:<5s} | Scheduled: {:<12s} ||| Note name: {:<5s} | Created: {:<5s} "\
-             .format( self.all_notes[name][0], self.all_notes[name][2], name,self.all_notes[name][1]))
+            print("The Deleted note: | {:<5s} | Scheduled: {:<12s}"
+                "||| Note name: {:<5s} | Created: {:<5s} "\
+             .format( self.all_notes[name][0], self.all_notes[name][2], 
+                name,self.all_notes[name][1]))
             del self.all_notes[name]
         except KeyError:
             print ("**********************   WARNING   *********************************")
@@ -74,6 +83,7 @@ class Notebook(dict):
             print ("****************************************************")
 
     def validate_date_format(self, scheduled_date):
+        """Date type validation."""
         try:
             datetime.datetime.strptime(scheduled_date, '%Y-%m-%d')
             return True
